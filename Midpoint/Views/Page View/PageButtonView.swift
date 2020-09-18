@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import MapKit
 
 class PageButtonView: UIView {
 
@@ -17,7 +18,8 @@ class PageButtonView: UIView {
 	
 	private var pressGesture = UILongPressGestureRecognizer()
 	
-	weak var delegate: PageDelegate?
+	weak var pageDelegate: PageDelegate?
+	weak var mapDelegate: MapDelegate?
 	
 	init(action: PageButtonAction? = nil) {
 		self.action = action
@@ -87,25 +89,28 @@ class PageButtonView: UIView {
 		
 		if sender.state == .ended {
 			
+			guard let frozen = pageDelegate?.getFrozenPage(), let coordinate = mapDelegate?.relativeCenter(middle: true) else { return }
+			
 			switch self.action {
 			
-				case .cancel:
-
-				delegate?.getFrozenPage()?.view.state = .empty
-				delegate?.thawPages()
-				
 				case .confirm:
+				frozen.view.meta.updateAnnotation(new: MKPlacemark(coordinate: coordinate))
+				frozen.view.state = .set
+				mapDelegate?.placePin(meta: frozen.view.meta)
 				
-				delegate?.getFrozenPage()?.view.state = .set
-				delegate?.thawPages()
-				
-				if (delegate?.getEmptyPage() == nil) {
-					delegate?.addPage(index: 0, state: .empty, animate: true)
-				}
-				
-				default:
-				return
+				case .cancel:
+				frozen.view.state = .empty
+				mapDelegate?.replacePin(meta: frozen.view.meta)
 			
+				default:
+				break
+			
+			}
+			
+			pageDelegate?.thawPages()
+			
+			if pageDelegate?.getEmptyPage() == nil {
+				pageDelegate?.addPage(index: 0, state: .empty, animate: true)
 			}
 			
 		}
@@ -121,23 +126,23 @@ class PageButtonView: UIView {
 		
 			case .confirm:
 			symbolName = "checkmark"
-			self.backgroundColor = UIColor(red: 0.35, green: 0.80, blue: 0.51, alpha: 1.00)
+			self.backgroundColor = UIColour(red: 0.35, green: 0.80, blue: 0.51, alpha: 1.00)
 			
 			case .cancel:
 			symbolName = "xmark"
-			self.backgroundColor = UIColor(red: 0.94, green: 0.79, blue: 0.37, alpha: 1.00)
+			self.backgroundColor = UIColour(red: 0.94, green: 0.79, blue: 0.37, alpha: 1.00)
 			
 			case .edit:
 			symbolName = "pencil"
-			self.backgroundColor = UIColor(red: 0.38, green: 0.59, blue: 0.86, alpha: 1.00)
+			self.backgroundColor = UIColour(red: 0.38, green: 0.59, blue: 0.86, alpha: 1.00)
 			
 			case .delete:
 			symbolName = "trash"
-			self.backgroundColor = UIColor(red: 0.88, green: 0.43, blue: 0.33, alpha: 1.00)
+			self.backgroundColor = UIColour(red: 0.88, green: 0.43, blue: 0.33, alpha: 1.00)
 		
 		}
 
-		self.symbolView.image = UIImage(systemName: symbolName, withConfiguration: UIImage.SymbolConfiguration(weight: .black))?.withTintColor(UIColor.white, renderingMode: .alwaysOriginal)
+		self.symbolView.image = UIImage(systemName: symbolName, withConfiguration: UIImage.SymbolConfiguration(weight: .black))?.withTintColor(UIColour.white, renderingMode: .alwaysOriginal)
 	
 	}
 	

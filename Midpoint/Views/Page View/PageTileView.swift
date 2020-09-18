@@ -21,11 +21,11 @@ class PageTileView: UIView {
 	
 	var index: Int? {
 	
-		get { return delegate?.getPageIndex(page: self) }
+		get { return pageDelegate?.getPageIndex(page: self) }
 	
 	}
 	
-	var letter: String
+	var meta: PageTileMetaModel
 
 	let locationContainer = UIView()
 	let locationIcon: PageIconView
@@ -38,11 +38,12 @@ class PageTileView: UIView {
 	private var tapGesture = UITapGestureRecognizer()
 	private var pressGesture = UILongPressGestureRecognizer()
 	
-	weak var delegate: PageDelegate?
+	weak var pageDelegate: PageDelegate?
+	weak var mapDelegate: MapDelegate?
 		
-	init(state: PageTileState, letter: String) {
-		self.locationIcon = PageIconView(state: state, letter: letter)
-		self.letter = letter
+	init(state: PageTileState, meta: PageTileMetaModel) {
+		self.locationIcon = PageIconView(state: state, meta: meta)
+		self.meta = meta
 		super.init(frame: CGRect.zero)
 		self.willInitState(state: state)
 		
@@ -53,17 +54,17 @@ class PageTileView: UIView {
 		pressGesture.delegate = self
 		pressGesture.minimumPressDuration = 0.0
 		
-		self.backgroundColor = UIColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1.00)
+		self.backgroundColor = UIColour(red: 0.95, green: 0.95, blue: 0.95, alpha: 1.00)
 		self.layer.cornerRadius = 30
 		
-		locationTitle.textColor = UIColor(red: 0.35, green: 0.35, blue: 0.35, alpha: 1.00)
+		locationTitle.textColor = UIColour(red: 0.35, green: 0.35, blue: 0.35, alpha: 1.00)
 		locationTitle.font = UIFont(descriptor: UIFont.systemFont(ofSize: 16, weight: .black).fontDescriptor.withDesign(.rounded)!, size: 16)
 		
 		locationAddress.numberOfLines = 3
-		locationAddress.textColor = UIColor(red: 0.20, green: 0.20, blue: 0.20, alpha: 1.00)
+		locationAddress.textColor = UIColour(red: 0.20, green: 0.20, blue: 0.20, alpha: 1.00)
 		locationAddress.font = UIFont(descriptor: UIFont.systemFont(ofSize: 18, weight: .bold).fontDescriptor.withDesign(.rounded)!, size: 18)
 		
-		locationCoordinates.textColor = UIColor(red: 0.68, green: 0.70, blue: 0.76, alpha: 1.00)
+		locationCoordinates.textColor = UIColour(red: 0.68, green: 0.70, blue: 0.76, alpha: 1.00)
 		locationCoordinates.font = UIFont(descriptor: UIFont.systemFont(ofSize: 12, weight: .semibold).fontDescriptor.withDesign(.rounded)!, size: 12)
 		
 		locationIcon.translatesAutoresizingMaskIntoConstraints = false
@@ -126,18 +127,16 @@ class PageTileView: UIView {
 		
 		guard let index = self.index else { return }
 		
-		switch state {
-
-			case .empty, .set:
-			delegate?.freezePages(freeze: index)
+		if state == .empty || state == .set {
+		
+			// TODO:
+			// Update mapview camera location before hovering pin if annotation exists
 			
-			case .editing:
-			return
-
-			case .none:
-			print("NONE")
+			pageDelegate?.freezePages(freeze: index)
+			mapDelegate?.hoverPin(meta: meta)
+			
 		}
-
+		
 	}
 	
 	@objc func didPressLocation(sender: UILongPressGestureRecognizer) {
@@ -185,7 +184,7 @@ class PageTileView: UIView {
 	
 	func willSetState(state: PageTileState) {
 	
-		locationIcon.updateIcon(state: state, letter: self.letter)
+		locationIcon.updateIcon(state: state, meta: meta)
 	
 		switch state {
 		

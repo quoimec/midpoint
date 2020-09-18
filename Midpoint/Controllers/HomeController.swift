@@ -16,7 +16,6 @@ class HomeController: UIViewController {
 	let tabView = TabView(tabs: ["A", "B", "C"])
 
 	let mapView = MapView()
-	let pinView = MapPinView()
 	let overlayView = OverlayView()
 
 	var tabTop = NSLayoutConstraint()
@@ -31,7 +30,8 @@ class HomeController: UIViewController {
 		
 		mapView.mapView.delegate = self
 		overlayView.delegate = self
-		overlayView.pageView.delegate = self
+		overlayView.pageView.homeDelegate = self
+		overlayView.pageView.mapDelegate = mapView
 		
 		mapView.mapView.camera = MKMapCamera(lookingAtCenter: CLLocationCoordinate2D(latitude: -33.90, longitude: 151.14), fromDistance: CLLocationDistance(15000.0), pitch: 0.0, heading: CLLocationDirection(0.0))
 		
@@ -42,7 +42,6 @@ class HomeController: UIViewController {
 		self.view.addSubview(mapView)
 		self.view.addSubview(tabView)
 		self.view.addSubview(overlayView)
-		self.view.addSubview(pinView)
 		
 		tabTop = NSLayoutConstraint(item: tabView, attribute: .top, relatedBy: .equal, toItem: self.view, attribute: .top, multiplier: 1.0, constant: tabView.tapTopConstant)
 		overlayTop = NSLayoutConstraint(item: self.view!, attribute: .bottom, relatedBy: .equal, toItem: overlayView, attribute: .top, multiplier: 1.0, constant: 0)
@@ -80,6 +79,8 @@ class HomeController: UIViewController {
 			safe.overlayTop.constant = safe.overlayView.overlayBottom
 			safe.view.layoutIfNeeded()
 		})
+		
+//		mapView.mapView.addAnnotation(MKPlacemark(coordinate: mapView.relativeCenter(middle: true)))
 
 	}
 	
@@ -182,11 +183,27 @@ extension HomeController: HomeDelegate {
 extension HomeController: MKMapViewDelegate {
 
 	func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
-		overlayView.pageView.updateCoordinates(coordinate: mapView.centerCoordinate)
+		overlayView.pageView.updateCoordinates(coordinate: self.mapView.relativeCenter(middle: false))
 	}
 
 	func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-		overlayView.pageView.updateLocation(location: CLLocation(latitude: mapView.centerCoordinate.latitude, longitude: mapView.centerCoordinate.longitude), altitude: mapView.camera.altitude / 300000)
+	
+		let relative = self.mapView.relativeCenter(middle: false)
+	
+		overlayView.pageView.updateLocation(location: CLLocation(latitude: relative.latitude, longitude: relative.longitude), altitude: mapView.camera.altitude / 300000)
+		
+	}
+	
+	func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+
+		let reuse = "MapPin"
+
+		let annotation = mapView.dequeueReusableAnnotationView(withIdentifier: reuse) ?? MKAnnotationView(annotation: annotation, reuseIdentifier: reuse)
+		
+		annotation.image = self.mapView.pinView.image
+		
+		return annotation
+	
 	}
 
 }

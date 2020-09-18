@@ -41,20 +41,20 @@ class TabView: UIView {
 		
 		super.init(frame: CGRect.zero)
 		
-		self.backgroundColor = UIColor.white
+		self.backgroundColor = UIColour.white
 		//(red: 0.92, green: 0.94, blue: 0.93, alpha: 1.00)
-		sliderView.backgroundColor = UIColor(red: 0.11, green: 0.61, blue: 0.99, alpha: 1.00)
+		sliderView.backgroundColor = UIColour(red: 0.11, green: 0.61, blue: 0.99, alpha: 1.00)
 		
 		sliderView.translatesAutoresizingMaskIntoConstraints = false
 		
 		self.layer.cornerRadius = tabHeight * tabRadius / 2.0
-		self.layer.shadowColor = UIColor.black.cgColor
+		self.layer.shadowColor = UIColour.black.cgColor
 		self.layer.shadowOpacity = 0.3
 		self.layer.shadowOffset = .zero
 		self.layer.shadowRadius = 5
 		
 		sliderView.layer.cornerRadius = (tabHeight - (tabInset * 2)) * tabRadius / 2.0
-		sliderView.layer.shadowColor = UIColor.black.cgColor
+		sliderView.layer.shadowColor = UIColour.black.cgColor
 		sliderView.layer.shadowOpacity = 0.15
 		sliderView.layer.shadowOffset = .zero
 		sliderView.layer.shadowRadius = 2

@@ -17,7 +17,7 @@ class DragView: UIView {
 		super.init(frame: CGRect.zero)
 		
 		dragHandle.layer.cornerRadius = 3
-		dragHandle.backgroundColor = UIColor(red: 0.81, green: 0.81, blue: 0.81, alpha: 1.00)
+		dragHandle.backgroundColor = UIColour(red: 0.81, green: 0.81, blue: 0.81, alpha: 1.00)
 		
 		dragHandle.translatesAutoresizingMaskIntoConstraints = false
 		

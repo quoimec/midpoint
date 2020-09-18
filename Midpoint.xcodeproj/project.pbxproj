@@ -30,6 +30,8 @@
 		CB63F2BB23DF827000C41415 /* PageTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB63F2BA23DF827000C41415 /* PageTileView.swift */; };
 		CB63F2BE23DF83B400C41415 /* LocationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB63F2BD23DF83B400C41415 /* LocationModel.swift */; };
 		CB8C199F2407BC1200BB88CC /* PageIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB8C199E2407BC1200BB88CC /* PageIconView.swift */; };
+		CB8C9189251439C700BF51A6 /* ColourAlias.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB8C9188251439C700BF51A6 /* ColourAlias.swift */; };
+		CB8C918B2514436C00BF51A6 /* MapDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB8C918A2514436C00BF51A6 /* MapDelegate.swift */; };
 		CB9906F523F5370700930150 /* PageThroughView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB9906F423F5370700930150 /* PageThroughView.swift */; };
 		CB9906F923F53F7C00930150 /* MapModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB9906F823F53F7C00930150 /* MapModel.swift */; };
 		CBB6F561241A083000B50315 /* PageDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBB6F560241A083000B50315 /* PageDelegate.swift */; };
@@ -62,6 +64,8 @@
 		CB63F2BA23DF827000C41415 /* PageTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageTileView.swift; sourceTree = "<group>"; };
 		CB63F2BD23DF83B400C41415 /* LocationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationModel.swift; sourceTree = "<group>"; };
 		CB8C199E2407BC1200BB88CC /* PageIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageIconView.swift; sourceTree = "<group>"; };
+		CB8C9188251439C700BF51A6 /* ColourAlias.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColourAlias.swift; sourceTree = "<group>"; };
+		CB8C918A2514436C00BF51A6 /* MapDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapDelegate.swift; sourceTree = "<group>"; };
 		CB9906F423F5370700930150 /* PageThroughView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageThroughView.swift; sourceTree = "<group>"; };
 		CB9906F823F53F7C00930150 /* MapModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapModel.swift; sourceTree = "<group>"; };
 		CBB6F560241A083000B50315 /* PageDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageDelegate.swift; sourceTree = "<group>"; };
@@ -111,6 +115,7 @@
 		CB2E993123DD173400AAA447 /* Midpoint */ = {
 			isa = PBXGroup;
 			children = (
+				CB8C9187251439BA00BF51A6 /* Alias */,
 				CB5561E623E37CDD00FF3A56 /* Delegates */,
 				CB5561E223E2A9D700FF3A56 /* Gestures */,
 				CB63F2BC23DF83A800C41415 /* Models */,
@@ -163,6 +168,7 @@
 				CB5561E723E37CEC00FF3A56 /* OverlayDelegate.swift */,
 				CBB6F560241A083000B50315 /* PageDelegate.swift */,
 				CB3084DA2430353000A5CFD0 /* HomeDelegate.swift */,
+				CB8C918A2514436C00BF51A6 /* MapDelegate.swift */,
 			);
 			path = Delegates;
 			sourceTree = "<group>";
@@ -175,6 +181,14 @@
 				CB9906F823F53F7C00930150 /* MapModel.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		CB8C9187251439BA00BF51A6 /* Alias */ = {
+			isa = PBXGroup;
+			children = (
+				CB8C9188251439C700BF51A6 /* ColourAlias.swift */,
+			);
+			path = Alias;
 			sourceTree = "<group>";
 		};
 		CBB766D9241E3BE5003A8BBA /* Map View */ = {
@@ -260,6 +274,7 @@
 				CB9906F523F5370700930150 /* PageThroughView.swift in Sources */,
 				CB091E8C23E1539800B6D3F8 /* DragView.swift in Sources */,
 				CB0E058423F2017E00D68A0A /* PageView.swift in Sources */,
+				CB8C9189251439C700BF51A6 /* ColourAlias.swift in Sources */,
 				CBB766DB241E3C02003A8BBA /* MapPinView.swift in Sources */,
 				CBB6F561241A083000B50315 /* PageDelegate.swift in Sources */,
 				CB63F2B723DD398400C41415 /* AddressView.swift in Sources */,
@@ -267,6 +282,7 @@
 				CB2E993723DD173400AAA447 /* ViewController.swift in Sources */,
 				CB2E993D23DD173400AAA447 /* Midpoint.xcdatamodeld in Sources */,
 				CB5561E423E2A9ED00FF3A56 /* TabGesture.swift in Sources */,
+				CB8C918B2514436C00BF51A6 /* MapDelegate.swift in Sources */,
 				CB2E994B23DD177900AAA447 /* MapView.swift in Sources */,
 				CB2E993323DD173400AAA447 /* AppDelegate.swift in Sources */,
 				CB2E994E23DD18CB00AAA447 /* HomeController.swift in Sources */,

@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import MapKit
 
 class PageContainer {
 
@@ -122,6 +123,136 @@ class PageContainer {
 		
 	}
 	
+}
+
+struct PageTileMetaModel {
+
+	var colour: UIColour
+	var icon: String
+	var letter: String
+	var annotation: MKAnnotation?
+	
+	init(letter: String) {
+		self.letter = letter
+		
+		switch letter {
+		
+			case "A":
+			self.icon = "A-Button"
+			self.colour = #colorLiteral(red: 0.81, green: 0.57, blue: 0.53, alpha: 1.0)
+			
+			case "B":
+			self.icon = "B-Button"
+			self.colour = #colorLiteral(red: 1.0, green: 0.42, blue: 0.73, alpha: 1.0)
+			
+			case "C":
+			self.icon = "C-Button"
+			self.colour = #colorLiteral(red: 0.37, green: 0.41, blue: 0.42, alpha: 1.0)
+			
+			case "D":
+			self.icon = "D-Button"
+			self.colour = #colorLiteral(red: 1.0, green: 0.25, blue: 0.63, alpha: 1.0)
+			
+			case "E":
+			self.icon = "E-Button"
+			self.colour = #colorLiteral(red: 0.64, green: 1.0, blue: 0.69, alpha: 1.0)
+			
+			case "F":
+			self.icon = "F-Button"
+			self.colour = #colorLiteral(red: 0.74, green: 1.0, blue: 0.44, alpha: 1.0)
+			
+			case "G":
+			self.icon = "G-Button"
+			self.colour = #colorLiteral(red: 0.3, green: 0.39, blue: 0.24, alpha: 1.0)
+			
+			case "H":
+			self.icon = "H-Button"
+			self.colour = #colorLiteral(red: 0.86, green: 0.32, blue: 0.96, alpha: 1.0)
+			
+			case "I":
+			self.icon = "I-Button"
+			self.colour = #colorLiteral(red: 1.0, green: 0.47, blue: 0.23, alpha: 1.0)
+			
+			case "J":
+			self.icon = "J-Button"
+			self.colour = #colorLiteral(red: 0.83, green: 0.24, blue: 0.96, alpha: 1.0)
+			
+			case "K":
+			self.icon = "K-Button"
+			self.colour = #colorLiteral(red: 0.38, green: 0.86, blue: 1.0, alpha: 1.0)
+			
+			case "L":
+			self.icon = "L-Button"
+			self.colour = #colorLiteral(red: 0.48, green: 0.82, blue: 0.24, alpha: 1.0)
+			
+			case "M":
+			self.icon = "M-Button"
+			self.colour = #colorLiteral(red: 0.48, green: 1.0, blue: 1.0, alpha: 1.0)
+			
+			case "N":
+			self.icon = "N-Button"
+			self.colour = #colorLiteral(red: 0.32, green: 1.0, blue: 0.48, alpha: 1.0)
+			
+			case "O":
+			self.icon = "O-Button"
+			self.colour = #colorLiteral(red: 0.48, green: 0.86, blue: 0.67, alpha: 1.0)
+			
+			case "P":
+			self.icon = "P-Button"
+			self.colour = #colorLiteral(red: 0.29, green: 0.91, blue: 0.84, alpha: 1.0)
+			
+			case "Q":
+			self.icon = "Q-Button"
+			self.colour = #colorLiteral(red: 0.7, green: 0.25, blue: 0.73, alpha: 1.0)
+			
+			case "R":
+			self.icon = "R-Button"
+			self.colour = #colorLiteral(red: 0.49, green: 0.21, blue: 1.0, alpha: 1.0)
+			
+			case "S":
+			self.icon = "S-Button"
+			self.colour = #colorLiteral(red: 1.0, green: 1.0, blue: 0.65, alpha: 1.0)
+			
+			case "T":
+			self.icon = "T-Button"
+			self.colour = #colorLiteral(red: 1.0, green: 0.23, blue: 0.43, alpha: 1.0)
+			
+			case "U":
+			self.icon = "U-Button"
+			self.colour = #colorLiteral(red: 1.0, green: 1.0, blue: 0.24, alpha: 1.0)
+			
+			case "V":
+			self.icon = "V-Button"
+			self.colour = #colorLiteral(red: 0.24, green: 0.97, blue: 0.34, alpha: 1.0)
+			
+			case "W":
+			self.icon = "W-Button"
+			self.colour = #colorLiteral(red: 1.0, green: 1.0, blue: 0.46, alpha: 1.0)
+			
+			case "X":
+			self.icon = "X-Button"
+			self.colour = #colorLiteral(red: 0.75, green: 0.65, blue: 0.74, alpha: 1.0)
+			
+			case "Y":
+			self.icon = "Y-Button"
+			self.colour = #colorLiteral(red: 0.92, green: 0.75, blue: 0.37, alpha: 1.0)
+			
+			case "Z":
+			self.icon = "Z-Button"
+			self.colour = #colorLiteral(red: 0.41, green: 0.5, blue: 0.9, alpha: 1.0)
+			
+			default:
+			self.icon = ""
+			self.colour = UIColor.black
+			
+		}
+		
+	}
+
+	mutating func updateAnnotation(new: MKAnnotation) {
+		self.annotation = new
+	}
+
 }
 
 enum PageConstraint {

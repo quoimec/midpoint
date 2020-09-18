@@ -26,8 +26,8 @@ class TitleView: UIView {
 		textField.returnKeyType = .done
 		textField.autocorrectionType = .no
 		textField.font = UIFont.systemFont(ofSize: 24, weight: .black)
-		textField.textColor = UIColor(red: 0.15, green: 0.15, blue: 0.15, alpha: 1.00)
-		textField.attributedPlaceholder = NSAttributedString(string: "Untitled Map", attributes: [NSAttributedString.Key.foregroundColor: UIColor(red: 0.86, green: 0.86, blue: 0.86, alpha: 1.00)])
+		textField.textColor = UIColour(red: 0.15, green: 0.15, blue: 0.15, alpha: 1.00)
+		textField.attributedPlaceholder = NSAttributedString(string: "Untitled Map", attributes: [NSAttributedString.Key.foregroundColor: UIColour(red: 0.86, green: 0.86, blue: 0.86, alpha: 1.00)])
 		textField.isUserInteractionEnabled = false
 		
 		textField.translatesAutoresizingMaskIntoConstraints = false

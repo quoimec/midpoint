@@ -32,7 +32,13 @@ class PageView: UIView {
 	
 	private lazy var geocoder = CLGeocoder()
 	
-	weak var delegate: HomeDelegate?
+	weak var homeDelegate: HomeDelegate?
+	weak var mapDelegate: MapDelegate? {
+		willSet (delegate) {
+			throughView.upperButton.mapDelegate = delegate
+			throughView.lowerButton.mapDelegate = delegate
+		}
+	}
 	
 	init(padding: CGFloat, width: CGFloat, height: CGFloat) {
 		
@@ -48,8 +54,8 @@ class PageView: UIView {
 		
 		scrollView.delegate = self
 		throughView.delegate = self
-		throughView.upperButton.delegate = self
-		throughView.lowerButton.delegate = self
+		throughView.upperButton.pageDelegate = self
+		throughView.lowerButton.pageDelegate = self
 		
 		scrollView.clipsToBounds = false
 		scrollView.isPagingEnabled = true
@@ -160,14 +166,16 @@ extension PageView: PageDelegate {
 	
 	func addPage(index: Int = 0, state: PageTileState = .empty, animate: Bool = false) {
 		
-		let assigned = pages.map({ $0.view.letter })
+		let assigned = pages.map({ $0.view.meta.letter })
 		let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".map({ String($0) }).filter({ !assigned.contains($0) })
 		
 		// TODO:
 		// Deal with > 26 locations
 		
-		let view = PageTileView(state: state, letter: alphabet.randomElement()!)
-		view.delegate = self
+		let view = PageTileView(state: state, meta: PageTileMetaModel(letter: alphabet.randomElement()!))
+		
+		view.pageDelegate = self
+		view.mapDelegate = mapDelegate
 		
 		let top = NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal, toItem: scrollView, attribute: .top, multiplier: 1.0, constant: 0)
 		let bottom = NSLayoutConstraint(item: scrollView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1.0, constant: 0)
@@ -378,7 +386,7 @@ extension PageView: PageDelegate {
 			
 			// TODO:
 			// Intercept the resample location if the page has already been set and instead move the camera to the set location
-			safe.delegate?.resampleLocation()
+			safe.homeDelegate?.resampleLocation()
 			
 			safe.scrollView.layoutIfNeeded()
 		

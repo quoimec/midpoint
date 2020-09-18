@@ -32,10 +32,10 @@ class OverlayView: UIView {
 	init() {
 		super.init(frame: CGRect.zero)
 		
-		overlayView.backgroundColor = UIColor.white
+		overlayView.backgroundColor = UIColour.white
 		overlayView.layer.cornerRadius = 30
 		overlayView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-		overlayView.layer.shadowColor = UIColor.black.cgColor
+		overlayView.layer.shadowColor = UIColour.black.cgColor
 		overlayView.layer.shadowOpacity = 0.3
 		overlayView.layer.shadowOffset = .zero
 		overlayView.layer.shadowRadius = 5
