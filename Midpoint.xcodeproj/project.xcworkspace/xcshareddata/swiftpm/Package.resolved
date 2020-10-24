@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "TileKit",
+        "repositoryURL": "/Users/Charlie/Projects/Swift/Packages/TileKit",
+        "state": {
+          "branch": "main",
+          "revision": "2227d4e8ecd67b8021182ccbedb33f3f4bd294c3",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}

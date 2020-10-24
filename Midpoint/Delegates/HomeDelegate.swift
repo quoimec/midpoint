@@ -7,9 +7,14 @@
 //
 
 import Foundation
+import CoreLocation
 
 protocol HomeDelegate: class {
 
-	func resampleLocation()
+	func resampleAddress()
+	
+	func resampleCoordinates()
+	
+	func updateMidpoint()
 
 }

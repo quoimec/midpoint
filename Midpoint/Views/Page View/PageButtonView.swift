@@ -20,6 +20,7 @@ class PageButtonView: UIView {
 	
 	weak var pageDelegate: PageDelegate?
 	weak var mapDelegate: MapDelegate?
+	weak var homeDelegate: HomeDelegate?
 	
 	init(action: PageButtonAction? = nil) {
 		self.action = action
@@ -94,13 +95,21 @@ class PageButtonView: UIView {
 			switch self.action {
 			
 				case .confirm:
-				frozen.view.meta.updateAnnotation(new: MKPlacemark(coordinate: coordinate))
+				frozen.view.meta.updatePlacemark(new: MKPlacemark(coordinate: coordinate))
 				frozen.view.state = .set
 				mapDelegate?.placePin(meta: frozen.view.meta)
 				
 				case .cancel:
 				frozen.view.state = .empty
 				mapDelegate?.replacePin(meta: frozen.view.meta)
+			
+				case .delete:
+				return
+//				mapDelegate?.removePin(meta: frozen.view.meta)
+//				pageDelegate?.
+				
+				case .edit:
+				return 
 			
 				default:
 				break
@@ -112,6 +121,8 @@ class PageButtonView: UIView {
 			if pageDelegate?.getEmptyPage() == nil {
 				pageDelegate?.addPage(index: 0, state: .empty, animate: true)
 			}
+			
+			homeDelegate?.updateMidpoint()
 			
 		}
 	

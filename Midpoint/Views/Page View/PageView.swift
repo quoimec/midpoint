@@ -32,7 +32,12 @@ class PageView: UIView {
 	
 	private lazy var geocoder = CLGeocoder()
 	
-	weak var homeDelegate: HomeDelegate?
+	weak var homeDelegate: HomeDelegate? {
+		willSet (delegate) {
+			throughView.upperButton.homeDelegate = delegate
+			throughView.lowerButton.homeDelegate = delegate
+		}
+	}
 	weak var mapDelegate: MapDelegate? {
 		willSet (delegate) {
 			throughView.upperButton.mapDelegate = delegate
@@ -96,6 +101,7 @@ class PageView: UIView {
 }
 
 extension PageView: PageDelegate {
+	
 	
 	/**
 	#	Page Getters
@@ -166,11 +172,11 @@ extension PageView: PageDelegate {
 	
 	func addPage(index: Int = 0, state: PageTileState = .empty, animate: Bool = false) {
 		
-		let assigned = pages.map({ $0.view.meta.letter })
-		let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".map({ String($0) }).filter({ !assigned.contains($0) })
-		
 		// TODO:
 		// Deal with > 26 locations
+		
+		let assigned = pages.map({ $0.view.meta.letter })
+		let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".map({ String($0) }).filter({ !assigned.contains($0) })
 		
 		let view = PageTileView(state: state, meta: PageTileMetaModel(letter: alphabet.randomElement()!))
 		
@@ -220,6 +226,10 @@ extension PageView: PageDelegate {
 		
 		pages.insert(PageContainer(view: view, leading: leading, top: top, trailing: trailing, bottom: bottom, width: width, height: height), at: safeindex)
 		
+		if let coordinate = mapDelegate?.relativeCenter(middle: false) {
+			updateCoordinates(coordinate: coordinate)
+		}
+		
 		scrollView.addConstraints(pages[safeindex].constraints)
 		
 		if animate {
@@ -240,7 +250,19 @@ extension PageView: PageDelegate {
 			scrollView.layoutIfNeeded()
 			
 		}
+		
+		DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5, execute: { [weak self] in
+			guard let safe = self else { return }
+			safe.mapDelegate?.updatePin(meta: view.meta)
+			view.meta.updateImage(new: safe.mapDelegate?.renderPin(meta: view.meta))
+		})
 
+	}
+
+	func deletePage(index: Int) {
+	
+		
+	
 	}
 
 	func scrollPage(index: Int, animated: Bool, dim: Bool = false, completion: (() -> Void)? = nil) {
@@ -253,7 +275,7 @@ extension PageView: PageDelegate {
 			page: Int - The index of the page to scroll to
 			animated: Bool - Determines if the pagination is animated
 			dim: Bool - If animation is enabled, determines if an alpha dimming should apply to all other pages
-			completion: (() -> Void) - A simple optional callback to indicate that the scrolling process has completed
+			completion: (() -> Void) - An optional callback to indicate that the scrolling process has completed
 		**/
 	
 		self.page = index
@@ -332,15 +354,16 @@ extension PageView: PageDelegate {
 	
 	/**
 	#	Meta Methods
-		Delegate methods for performing, scheduling and organising broad events within the context of the page view
+		Delegate methods for performing, scheduling and organising broad events within the context of
+		the page view
 	**/
 	
 	func freezePages(freeze: Int) {
 	
 		/**
 		#	Freeze Pages
-			A function for "freezing" a single page in the page stack, removing all non-index pages and effectively locking the scroll view.
-			This method is used when editing a tile's location.
+			A function for "freezing" a single page in the page stack, removing all non-index pages and
+			effectively locking the scroll view. This method is used when editing a tile's location.
 			
 		#	Arguments
 			freeze: Int - The index of the page to freeze
@@ -348,7 +371,8 @@ extension PageView: PageDelegate {
 	
 		state = .frozen
 	
-		// Open an animated scroll to the desired page and only begin the various freezing activities onces the scroll has arrived
+		// Open an animated scroll to the desired page and only begin the various freezing activities
+		// onces the scroll has arrived
 		scrollPage(index: freeze, animated: true, dim: true, completion: { [weak self] in
 		
 			guard let safe = self else { return }
@@ -384,9 +408,8 @@ extension PageView: PageDelegate {
 			
 			safe.pages[freeze].view.state = .editing
 			
-			// TODO:
-			// Intercept the resample location if the page has already been set and instead move the camera to the set location
-			safe.homeDelegate?.resampleLocation()
+			safe.homeDelegate?.resampleCoordinates()
+			safe.homeDelegate?.resampleAddress()
 			
 			safe.scrollView.layoutIfNeeded()
 		
@@ -404,14 +427,14 @@ extension PageView: PageDelegate {
 		// Remove active buttons and re-enable hit test passthrough
 		throughView.unsetButtons()
 	
-		guard let first = self.getFrozenPage(), let index = first.view.index else { return }
-		
 		// Re-add all non-index (i.e: freeze) pages back to the scroll view
 		for view in pages.filter({ !$0.frozen }).map({ $0.view }) {
 			scrollView.addSubview(view)
 		}
 		
-		first.thaw(scroll: scrollView)
+		if let frozen = self.getFrozenPage() {
+			frozen.thaw(scroll: scrollView)
+		}
 		
 		// Re-add all non-index (i.e: freeze) constraints back to the scroll view
 		scrollView.addConstraints(
@@ -428,15 +451,20 @@ extension PageView: PageDelegate {
 		})
 		
 		// Scroll back to the starting page index
+		let index = self.getFrozenPage()?.view.index ?? 0
+		
 		scrollPage(index: index, animated: false)
 		
 	}
 
-	func updateLocation(location: CLLocation, altitude: Double) {
+	func updateLocation(location: CLLocationCoordinate2D, altitude: Double) {
 
 		if state != .frozen { return }
 		
-		geocoder.reverseGeocodeLocation(location, completionHandler: { [weak self] placemarks, error in
+		// TODO:
+		// Implement better interpretation of altitude and geocoding
+		
+		geocoder.reverseGeocodeLocation(location.location, completionHandler: { [weak self] placemarks, error in
 			guard let safe = self, let placemark = placemarks?[0] else { return }
 			
 			if altitude <= 3.0 {
@@ -451,8 +479,11 @@ extension PageView: PageDelegate {
 	
 	func updateCoordinates(coordinate: CLLocationCoordinate2D) {
 		
-		if state != .frozen { return }
-		pages[page].view.updateCoordinates(latitude: coordinate.latitude, longitude: coordinate.longitude)
+		if state == .frozen {
+			pages[page].view.updateCoordinates(latitude: coordinate.latitude, longitude: coordinate.longitude)
+		} else if pages.count > 0 {
+			pages[0].view.updateCoordinates(latitude: coordinate.latitude, longitude: coordinate.longitude)
+		}
 		
 	}
 
@@ -460,6 +491,12 @@ extension PageView: PageDelegate {
 	
 		throughView.setButtons(upper: upper, lower: lower)
 	
+	}
+
+	func findPage(location: CLLocationCoordinate2D) -> PageTileMetaModel? {
+		
+		return pages.first(where: { $0.view.meta.checkCoordinate(coordinate: location) })?.view.meta
+		
 	}
 
 }
@@ -487,7 +524,11 @@ extension PageView: UIScrollViewDelegate {
 		if state == .focussed { self.unfocusPages(focus: page) }
 	
 		page = next
-	
+		
+		if let location = pages[page].view.meta.placemark?.coordinate {
+			mapDelegate?.moveCamera(location: location, animated: true)
+		}
+			
 	}
 	
 	func scrollViewDidScroll(_ scrollView: UIScrollView) {

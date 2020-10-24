@@ -10,16 +10,19 @@ import Foundation
 import UIKit
 import MapKit
 import CoreLocation
+import TileKit
 
 class HomeController: UIViewController {
 
-	let tabView = TabView(tabs: ["A", "B", "C"])
-
+	let tabView = TabView(count: 2)
+	
 	let mapView = MapView()
 	let overlayView = OverlayView()
 
 	var tabTop = NSLayoutConstraint()
 	var overlayTop = NSLayoutConstraint()
+	
+	let tabViewTopConstatnt: CGFloat = 58
 	
 	init() {
 		super.init(nibName: nil, bundle: nil)
@@ -30,8 +33,12 @@ class HomeController: UIViewController {
 		
 		mapView.mapView.delegate = self
 		overlayView.delegate = self
-		overlayView.pageView.homeDelegate = self
-		overlayView.pageView.mapDelegate = mapView
+		overlayView.pageView.delegate = self
+		overlayView.pageView.datasource = self
+//		overlayView.pageView.homeDelegate = self
+//		overlayView.pageView.mapDelegate = mapView
+		
+		tabView.delegate = self
 		
 		mapView.mapView.camera = MKMapCamera(lookingAtCenter: CLLocationCoordinate2D(latitude: -33.90, longitude: 151.14), fromDistance: CLLocationDistance(15000.0), pitch: 0.0, heading: CLLocationDirection(0.0))
 		
@@ -43,7 +50,7 @@ class HomeController: UIViewController {
 		self.view.addSubview(tabView)
 		self.view.addSubview(overlayView)
 		
-		tabTop = NSLayoutConstraint(item: tabView, attribute: .top, relatedBy: .equal, toItem: self.view, attribute: .top, multiplier: 1.0, constant: tabView.tapTopConstant)
+		tabTop = NSLayoutConstraint(item: tabView, attribute: .top, relatedBy: .equal, toItem: self.view, attribute: .top, multiplier: 1.0, constant: tabViewTopConstatnt)
 		overlayTop = NSLayoutConstraint(item: self.view!, attribute: .bottom, relatedBy: .equal, toItem: overlayView, attribute: .top, multiplier: 1.0, constant: 0)
 		
 		self.view.addConstraints([
@@ -72,15 +79,13 @@ class HomeController: UIViewController {
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		
-		overlayView.pageView.addPage(index: 0)
+		overlayView.pageView.addTile(index: 0)
 		
 		UIView.animate(withDuration: 1.0, delay: 0.8, usingSpringWithDamping: 0.8, initialSpringVelocity: 1.2, options: .curveLinear, animations: { [weak self] in
 			guard let safe = self else { return }
 			safe.overlayTop.constant = safe.overlayView.overlayBottom
 			safe.view.layoutIfNeeded()
 		})
-		
-//		mapView.mapView.addAnnotation(MKPlacemark(coordinate: mapView.relativeCenter(middle: true)))
 
 	}
 	
@@ -88,6 +93,44 @@ class HomeController: UIViewController {
 		fatalError("init(coder:) has not been implemented")
 	}
 
+}
+
+extension HomeController: TKDataSource {
+
+	func tileForIndex(index: Int) -> TKTileView {
+		
+//		let assigned = pages.map({ $0.view.meta.letter })
+		let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".map({ String($0) }) //.filter({ !assigned.contains($0) })
+		
+		let tile = TileView(content: .empty, meta: PageTileMetaModel(letter: alphabet.randomElement()!))
+		
+		return tile
+		
+	}
+	
+	func buttonForIndex(index: Int, position: TKButtonPosition) -> (TKButtonAction, UIImage, UIColor) {
+		return (.confirm, UIImage(), UIColor.red)
+	}
+
+}
+
+extension HomeController: TKDelegate {
+	
+	func didTapTile(index: Int) {
+		print("Didtaptile")
+		
+		if overlayView.pageView.state == .scroll {
+			overlayView.pageView.focusTiles(index: index)
+		}
+		
+		//		overlayView.pageView.freezeTiles(index: index)
+	}
+	
+	func didTapButton(action: TKButtonAction) {
+		print("Didtapbutton")
+		overlayView.pageView.unfocusTiles()
+	}
+	
 }
 
 extension HomeController: OverlayDelegate {
@@ -98,10 +141,10 @@ extension HomeController: OverlayDelegate {
 		overlayTop.constant = topConstant
 		
 		if topConstant > top {
-			tabTop.constant = tabView.tapTopConstant - (topConstant - top)
+			tabTop.constant = tabViewTopConstatnt - (topConstant - top)
 			tabView.alpha = 1.0 - (((topConstant / top) - 1.0) * 2)
 		} else {
-			tabTop.constant = tabView.tapTopConstant
+			tabTop.constant = tabViewTopConstatnt
 			tabView.alpha = 1.0
 		}
 		
@@ -135,7 +178,7 @@ extension HomeController: OverlayDelegate {
 
 		}
 		
-		tabTop.constant = tabView.tapTopConstant
+		tabTop.constant = tabViewTopConstatnt
 		
 		UIView.animate(withDuration: 1.0, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 1.2, options: .curveLinear, animations: { [weak self] in
 			guard let safe = self else { return }
@@ -164,46 +207,136 @@ extension HomeController: OverlayDelegate {
 	
 }
 
-extension HomeController: HomeDelegate {
-
-	func resampleLocation() {
-		overlayView.pageView.updateCoordinates(coordinate: mapView.mapView.centerCoordinate)
-		overlayView.pageView.updateLocation(location: CLLocation(latitude: mapView.mapView.centerCoordinate.latitude, longitude: mapView.mapView.centerCoordinate.longitude), altitude: mapView.mapView.camera.altitude / 300000)
-	}
-	
-	func calculateMidpoint() {
-	
-		
-	
-	
-	}
-
-}
+//extension HomeController: HomeDelegate {
+//
+//	func resampleCoordinates() {
+//		overlayView.pageView.updateCoordinates(coordinate: mapView.relativeCenter(middle: false))
+//	}
+//
+//	func resampleAddress() {
+//		overlayView.pageView.updateLocation(location: mapView.relativeCenter(middle: false), altitude: mapView.mapView.camera.altitude / 300000)
+//	}
+//
+//	func updateMidpoint() {
+//
+//		DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.25, execute: { [weak self] in
+//
+//			guard let safe = self else { return }
+//
+//			let active = safe.overlayView.pageView.pages.filter({ $0.view.meta.placemark != nil })
+//			let count = Double(active.count)
+//
+//			if count <= 1 { return }
+//
+//			let x = active.reduce(0.0, { $0 + $1.view.meta.x }) / count
+//			let y = active.reduce(0.0, { $0 + $1.view.meta.y }) / count
+//			let z = active.reduce(0.0, { $0 + $1.view.meta.z }) / count
+//
+//			if safe.mapView.midpoint != nil {
+//				safe.mapView.mapView.removeAnnotation(safe.mapView.midpoint!)
+//			}
+//
+//			let midpoint = CLLocationCoordinate2D(latitude: atan2(z, sqrt(x * x + y * y)) * 180.0 / Double.pi, longitude: atan2(y, x) * 180.0 / Double.pi)
+//
+//			safe.mapView.midpoint = MKPlacemark(coordinate: midpoint)
+//			safe.mapView.mapView.addAnnotation(safe.mapView.midpoint!)
+////
+////			let request = MKLocalSearch.Request()
+////
+////			request.naturalLanguageQuery = "pubs"
+////
+////
+//////			MKLocalPointsOfInterestRequest(center: midpoint, radius: CLLocationDistance(5000))
+//////
+//////			request.pointOfInterestFilter = MKPointOfInterestFilter(including: [.brewery, .winery, .nightlife])
+//////
+////
+////			MKLocalSearch(request: request).start(completionHandler: { (result, error) in
+////
+////				print(result?.mapItems)
+////
+////			})
+//
+//
+//		})
+//
+//	}
+//
+//}
 
 extension HomeController: MKMapViewDelegate {
 
 	func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
-		overlayView.pageView.updateCoordinates(coordinate: self.mapView.relativeCenter(middle: false))
+//		resampleCoordinates()
+		
+
+
+		overlayView.pageView.updateCoordinates(coordinate: mapView.relativeCenter(middle: false))
 	}
 
-	func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-	
-		let relative = self.mapView.relativeCenter(middle: false)
-	
-		overlayView.pageView.updateLocation(location: CLLocation(latitude: relative.latitude, longitude: relative.longitude), altitude: mapView.camera.altitude / 300000)
-		
-	}
-	
+//	func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+//		resampleAddress()
+//	}
+
 	func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
 
-		let reuse = "MapPin"
+		var reuse: String
+		var image: UIImage?
 
-		let annotation = mapView.dequeueReusableAnnotationView(withIdentifier: reuse) ?? MKAnnotationView(annotation: annotation, reuseIdentifier: reuse)
-		
-		annotation.image = self.mapView.pinView.image
-		
-		return annotation
-	
+		if let meta = overlayView.pageView.findPage(location: annotation.coordinate) {
+
+			reuse = meta.reuse
+			image = meta.image
+
+		} else if let midpoint = self.mapView.midpoint, annotation.coordinate == midpoint.coordinate {
+
+			reuse = "MapReuse-Midpoint"
+
+			let disposable = MapPinView()
+			disposable.updatePin(colour: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), icon: "Mid-Button")
+			image = disposable.renderImage()
+
+		} else {
+
+			return nil
+
+		}
+
+		if let annotation = mapView.dequeueReusableAnnotationView(withIdentifier: reuse) {
+			return annotation
+		} else {
+			let annotation = MKAnnotationView(annotation: annotation, reuseIdentifier: reuse)
+			annotation.image = image
+			annotation.centerOffset.y = self.mapView.pinView.height / -2 //image?.size.height ?? 0 / -2
+			return annotation
+		}
+
 	}
 
 }
+
+extension HomeController: TabDelegate {
+	
+	func getTabIconName(index: Int, focus: Bool) -> String {
+		
+		switch index {
+		
+			case 0:
+			return "Pin-" + (focus ? "Coloured" : "Filled")
+			
+			case 1:
+			return "Pint-" + (focus ? "Coloured" : "Filled")
+			
+			default:
+			return ""
+		
+		}
+		
+	}
+	
+	func didSelectTab(index: Int) {
+		print("Did Select Tab: \(index)")
+	}
+
+}
+

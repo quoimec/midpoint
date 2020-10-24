@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreLocation
+import MapKit
 
 struct MapModel {
 
@@ -21,6 +22,12 @@ struct MapModel {
 	func updateLocation() { return }
 	func deleteLocation() { return }
 	
+	
+	
+	
+	
+	
+	
 	private func updateMidpoint() -> CLLocationCoordinate2D {
 		return CLLocationCoordinate2D(latitude: -33.5, longitude: 151.5)
 	}
@@ -28,4 +35,3 @@ struct MapModel {
 	private func closestLandmarks(location: CLLocationCoordinate2D) -> Array<Int> { return [1] }
 	
 }
-

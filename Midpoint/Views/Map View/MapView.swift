@@ -16,7 +16,10 @@ class MapView: UIView {
 	let pinView = MapPinView()
 	let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
 
+	var midpoint: MKPlacemark?
+
 	init() {
+		
 		super.init(frame: CGRect.zero)
 		
 		blurView.isUserInteractionEnabled = false
@@ -35,13 +38,13 @@ class MapView: UIView {
 		
 			// Map View
 			NSLayoutConstraint(item: mapView, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1.0, constant: 0),
-			NSLayoutConstraint(item: mapView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1.0, constant: 0),
+			NSLayoutConstraint(item: mapView, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 0.75, constant: 0),
 			NSLayoutConstraint(item: self, attribute: .trailing, relatedBy: .equal, toItem: mapView, attribute: .trailing, multiplier: 1.0, constant: 0),
-			NSLayoutConstraint(item: self, attribute: .bottom, relatedBy: .equal, toItem: mapView, attribute: .bottom, multiplier: 1.0, constant: 0),
+			NSLayoutConstraint(item: mapView, attribute: .height, relatedBy: .equal, toItem: self, attribute: .height, multiplier: 1.5, constant: 0),
 			
 			// Pin View
-			NSLayoutConstraint(item: pinView, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1.0, constant: 0),
-			NSLayoutConstraint(item: pinView, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 0.5, constant: 0),
+			NSLayoutConstraint(item: pinView, attribute: .centerX, relatedBy: .equal, toItem: mapView, attribute: .centerX, multiplier: 1.0, constant: 0),
+			NSLayoutConstraint(item: pinView, attribute: .centerY, relatedBy: .equal, toItem: mapView, attribute: .centerY, multiplier: 1.0, constant: pinView.height / -2),
 			
 			// Blur View
 			NSLayoutConstraint(item: blurView, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1.0, constant: 0),
@@ -64,11 +67,21 @@ class MapView: UIView {
 
 extension MapView: MapDelegate {
 
-	func hoverPin(meta: PageTileMetaModel) {
+	func updatePin(meta: PageTileMetaModel) {
 	
 		pinView.updatePin(colour: meta.colour, icon: meta.icon)
 	
-		if let annotation = meta.annotation {
+	}
+	
+	func renderPin(meta: PageTileMetaModel) -> UIImage {
+	
+		return pinView.renderImage()
+	
+	}
+
+	func hoverPin(meta: PageTileMetaModel) {
+	
+		if let annotation = meta.placemark {
 		
 			// If an annotation already exists
 			pinView.alpha = 1.0
@@ -97,7 +110,7 @@ extension MapView: MapDelegate {
 			
 		}, completion: { [weak self] completed in
 			
-			guard let safe = self, let annotation = meta.annotation else { return }
+			guard let safe = self, let annotation = meta.placemark else { return }
 			
 			safe.mapView.addAnnotation(annotation)
 			safe.pinView.alpha = 0.0
@@ -111,7 +124,7 @@ extension MapView: MapDelegate {
 		pinView.alpha = 0.0
 		pinView.lowerPin()
 	
-		guard let annotation = meta.annotation else { return }
+		guard let annotation = meta.placemark else { return }
 		
 		mapView.addAnnotation(annotation)
 	
@@ -121,20 +134,31 @@ extension MapView: MapDelegate {
 		
 		pinView.alpha = 0.0
 		
-		guard let annotation = meta.annotation else { return }
+		guard let annotation = meta.placemark else { return }
 		
 		mapView.addAnnotation(annotation)
 	
 	}
 	
+	func moveCamera(location: CLLocationCoordinate2D, animated: Bool = false) {
+	
+		// TODO:
+		// Converted passed coordinate to correct center area for pin
+	
+		mapView.setCamera(MKMapCamera(lookingAtCenter: location, fromDistance: mapView.camera.altitude, pitch: 0.0, heading: CLLocationDirection(0.0)), animated: animated)
+		
+	}
+	
 	func relativeCenter(middle: Bool) -> CLLocationCoordinate2D {
 	
-		let offset = middle ? 0.0 : (pinView.height / 2)
+		return mapView.centerCoordinate
 	
-		// Calculate the relative position of the pin view bottom tip
-		let bottom = CGPoint(x: pinView.center.x, y: pinView.center.y + offset)
-	
-		return mapView.convert(bottom, toCoordinateFrom: mapView)
+//		let offset = middle ? 0.0 : (pinView.height / 2)
+//
+//		// Calculate the relative position of the pin view bottom tip
+//		let bottom = CGPoint(x: pinView.center.x, y: pinView.center.y + offset)
+//
+//		return mapView.convert(bottom, toCoordinateFrom: mapView)
 	
 	}
 	

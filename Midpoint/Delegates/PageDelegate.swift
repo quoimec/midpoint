@@ -38,10 +38,14 @@ protocol PageDelegate: class {
 	
 	func thawPages()
 	
-	func updateLocation(location: CLLocation, altitude: Double)
+	func deletePage(index: Int)
+	
+	func updateLocation(location: CLLocationCoordinate2D, altitude: Double)
 	
 	func updateCoordinates(coordinate: CLLocationCoordinate2D)
 	
 	func setButtons(upper: PageButtonAction, lower: PageButtonAction)
-	
+
+	func findPage(location: CLLocationCoordinate2D) -> PageTileMetaModel?
+
 }

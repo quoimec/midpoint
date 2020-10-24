@@ -8,17 +8,18 @@
 
 import Foundation
 import UIKit
+import TileKit
 
 class OverlayView: UIView {
 
 	var overlayView = UIView()
 	var dragView = DragView()
 	var titleView = TitleView()
-	var pageView = PageView(padding: 14, width: 0.64, height: 0.65)
+	var pageView = TKMainView(visible: 1, aspect: TKTileAspect(width: 1.0, height: 0.65))
 	
 	private var overlayOffset: CGFloat = 200
 	let overlayBottom: CGFloat = 140
-	let overlayMiddle: CGFloat = 420
+	let overlayMiddle: CGFloat = 340
 	let overlayTop: CGFloat = UIScreen.main.bounds.height - 110
 	
 	var overlayPadding: CGFloat = 100
@@ -173,8 +174,6 @@ extension OverlayView {
 
 	@objc private func tapTitle(sender: UIGestureRecognizer) {
 	
-		print("Tap tile")
-	
 		if sender.state == .began {
 		
 			UIView.animate(withDuration: 0.05, animations: { [weak self] in
@@ -191,8 +190,8 @@ extension OverlayView {
 				safe.titleView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
 			})
 			
-			titleView.textField.isUserInteractionEnabled = true
-			titleView.textField.becomeFirstResponder()
+//			titleView.textField.isUserInteractionEnabled = true
+//			titleView.textField.becomeFirstResponder()
 			
 		}
 	

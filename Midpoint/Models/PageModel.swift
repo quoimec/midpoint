@@ -123,6 +123,18 @@ class PageContainer {
 		
 	}
 	
+	func delete(scroll: PageScrollView) {
+	
+		scroll.removeConstraints([
+			top,
+			bottom,
+			width,
+			frozenleading,
+			frozentrailing
+		])
+	
+	}
+	
 }
 
 struct PageTileMetaModel {
@@ -130,116 +142,124 @@ struct PageTileMetaModel {
 	var colour: UIColour
 	var icon: String
 	var letter: String
-	var annotation: MKAnnotation?
+	var reuse: String
+	var placemark: MKPlacemark?
+	var image: UIImage?
+	
+	var x: Double = 0.0
+	var y: Double = 0.0
+	var z: Double = 0.0
 	
 	init(letter: String) {
+		
 		self.letter = letter
+		self.reuse = "MapReuse-\(letter)"
 		
 		switch letter {
 		
 			case "A":
 			self.icon = "A-Button"
-			self.colour = #colorLiteral(red: 0.81, green: 0.57, blue: 0.53, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.7140946062, green: 0.5025110192, blue: 0.467247088, alpha: 1)
 			
 			case "B":
 			self.icon = "B-Button"
-			self.colour = #colorLiteral(red: 1.0, green: 0.42, blue: 0.73, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.8197773973, green: 0.3443065068, blue: 0.5984375, alpha: 1)
 			
 			case "C":
 			self.icon = "C-Button"
-			self.colour = #colorLiteral(red: 0.37, green: 0.41, blue: 0.42, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.2468250571, green: 0.273508847, blue: 0.2801797945, alpha: 1)
 			
 			case "D":
 			self.icon = "D-Button"
-			self.colour = #colorLiteral(red: 1.0, green: 0.25, blue: 0.63, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.8421714469, green: 0.2105428617, blue: 0.5305680116, alpha: 1)
 			
 			case "E":
 			self.icon = "E-Button"
-			self.colour = #colorLiteral(red: 0.64, green: 1.0, blue: 0.69, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.5407191781, green: 0.8448737158, blue: 0.5829628639, alpha: 1)
 			
 			case "F":
 			self.icon = "F-Button"
-			self.colour = #colorLiteral(red: 0.74, green: 1.0, blue: 0.44, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.6009134204, green: 0.8120451627, blue: 0.3572998716, alpha: 1)
 			
 			case "G":
 			self.icon = "G-Button"
-			self.colour = #colorLiteral(red: 0.3, green: 0.39, blue: 0.24, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.1550768901, green: 0.2015999572, blue: 0.1240615121, alpha: 1)
 			
 			case "H":
 			self.icon = "H-Button"
-			self.colour = #colorLiteral(red: 0.86, green: 0.32, blue: 0.96, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.701763275, green: 0.2611212186, blue: 0.7833636558, alpha: 1)
 			
 			case "I":
 			self.icon = "I-Button"
-			self.colour = #colorLiteral(red: 1.0, green: 0.47, blue: 0.23, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.7822399401, green: 0.3676527718, blue: 0.1799151862, alpha: 1)
 			
 			case "J":
 			self.icon = "J-Button"
-			self.colour = #colorLiteral(red: 0.83, green: 0.24, blue: 0.96, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.6399249072, green: 0.1850385274, blue: 0.7401541096, alpha: 1)
 			
 			case "K":
 			self.icon = "K-Button"
-			self.colour = #colorLiteral(red: 0.38, green: 0.86, blue: 1.0, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.3048255565, green: 0.6898683647, blue: 0.8021725171, alpha: 1)
 			
 			case "L":
 			self.icon = "L-Button"
-			self.colour = #colorLiteral(red: 0.48, green: 0.82, blue: 0.24, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.4019848396, green: 0.686724101, blue: 0.2009924198, alpha: 1)
 			
 			case "M":
 			self.icon = "M-Button"
-			self.colour = #colorLiteral(red: 0.48, green: 1.0, blue: 1.0, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.3742166096, green: 0.7796179366, blue: 0.7796179366, alpha: 1)
 			
 			case "N":
 			self.icon = "N-Button"
-			self.colour = #colorLiteral(red: 0.32, green: 1.0, blue: 0.48, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.2787585616, green: 0.8711205051, blue: 0.4181378425, alpha: 1)
 			
 			case "O":
 			self.icon = "O-Button"
-			self.colour = #colorLiteral(red: 0.48, green: 0.86, blue: 0.67, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.4296700781, green: 0.7698255565, blue: 0.5997478173, alpha: 1)
 			
 			case "P":
 			self.icon = "P-Button"
-			self.colour = #colorLiteral(red: 0.29, green: 0.91, blue: 0.84, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.2482535658, green: 0.7790025685, blue: 0.719079294, alpha: 1)
 			
 			case "Q":
 			self.icon = "Q-Button"
-			self.colour = #colorLiteral(red: 0.7, green: 0.25, blue: 0.73, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.5737107689, green: 0.2048967032, blue: 0.5982983733, alpha: 1)
 			
 			case "R":
 			self.icon = "R-Button"
-			self.colour = #colorLiteral(red: 0.49, green: 0.21, blue: 1.0, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.3971679688, green: 0.1702148437, blue: 0.810546875, alpha: 1)
 			
 			case "S":
 			self.icon = "S-Button"
-			self.colour = #colorLiteral(red: 1.0, green: 1.0, blue: 0.65, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.7757116866, green: 0.7757116866, blue: 0.5042125963, alpha: 1)
 			
 			case "T":
 			self.icon = "T-Button"
-			self.colour = #colorLiteral(red: 1.0, green: 0.23, blue: 0.43, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.7954034675, green: 0.1829427975, blue: 0.342023491, alpha: 1)
 			
 			case "U":
 			self.icon = "U-Button"
-			self.colour = #colorLiteral(red: 1.0, green: 1.0, blue: 0.24, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.8311750856, green: 0.8311750856, blue: 0.1994820205, alpha: 1)
 			
 			case "V":
 			self.icon = "V-Button"
-			self.colour = #colorLiteral(red: 0.24, green: 0.97, blue: 0.34, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.1932857294, green: 0.7811964897, blue: 0.27382145, alpha: 1)
 			
 			case "W":
 			self.icon = "W-Button"
-			self.colour = #colorLiteral(red: 1.0, green: 1.0, blue: 0.46, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.7662938784, green: 0.7662938784, blue: 0.3524951841, alpha: 1)
 			
 			case "X":
 			self.icon = "X-Button"
-			self.colour = #colorLiteral(red: 0.75, green: 0.65, blue: 0.74, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.5795697774, green: 0.5022938071, blue: 0.5718421804, alpha: 1)
 			
 			case "Y":
 			self.icon = "Y-Button"
-			self.colour = #colorLiteral(red: 0.92, green: 0.75, blue: 0.37, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.7717786815, green: 0.6291674034, blue: 0.3103892523, alpha: 1)
 			
 			case "Z":
 			self.icon = "Z-Button"
-			self.colour = #colorLiteral(red: 0.41, green: 0.5, blue: 0.9, alpha: 1.0)
+			self.colour = #colorLiteral(red: 0.3342560883, green: 0.407629376, blue: 0.7337328767, alpha: 1)
 			
 			default:
 			self.icon = ""
@@ -248,9 +268,32 @@ struct PageTileMetaModel {
 		}
 		
 	}
+	
+	mutating func updateImage(new: UIImage?) {
+		self.image = new
+	}
 
-	mutating func updateAnnotation(new: MKAnnotation) {
-		self.annotation = new
+	mutating func updatePlacemark(new: MKPlacemark) {
+	
+		self.placemark = new
+		
+		// Convert new placemark into radians
+		let latitude = new.coordinate.latitude.radians
+		let longitude = new.coordinate.longitude.radians
+		
+		// Convert into global cartesian coordinates
+		self.x = cos(latitude) * cos(longitude)
+		self.y = cos(latitude) * sin(longitude)
+		self.z = sin(latitude)
+		
+	}
+	
+	func checkCoordinate(coordinate: CLLocationCoordinate2D) -> Bool {
+	
+		if placemark == nil { return false }
+	
+		return placemark!.coordinate == coordinate
+	
 	}
 
 }

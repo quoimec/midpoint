@@ -22,14 +22,15 @@ class MapPinView: UIView {
 	private var pinObjectBottom = NSLayoutConstraint()
 	private var pinShadowBottom = NSLayoutConstraint()
 	
-	var image = UIImage()
-	
-	let width: CGFloat = 40
+	let width: CGFloat = 50
 	var height: CGFloat {
-		get { return self.width * 1.35 }
+		get { return self.width * 1.25 }
 	}
 	var hover: CGFloat {
 		get { return self.width * 0.3 }
+	}
+	var margin: CGFloat {
+		get { return self.width * 0.1}
 	}
 	
 	init() {
@@ -75,9 +76,9 @@ class MapPinView: UIView {
 			NSLayoutConstraint(item: pinObject, attribute: .bottom, relatedBy: .equal, toItem: pinGoatee, attribute: .bottom, multiplier: 1.0, constant: 0),
 			
 			// Pin Letter
-			NSLayoutConstraint(item: pinLetter, attribute: .leading, relatedBy: .equal, toItem: pinObject, attribute: .leading, multiplier: 1.0, constant: 0),
-			NSLayoutConstraint(item: pinLetter, attribute: .top, relatedBy: .equal, toItem: pinObject, attribute: .top, multiplier: 1.0, constant: 0),
-			NSLayoutConstraint(item: pinObject, attribute: .trailing, relatedBy: .equal, toItem: pinLetter, attribute: .trailing, multiplier: 1.0, constant: 0),
+			NSLayoutConstraint(item: pinLetter, attribute: .leading, relatedBy: .equal, toItem: pinObject, attribute: .leading, multiplier: 1.0, constant: self.margin),
+			NSLayoutConstraint(item: pinLetter, attribute: .top, relatedBy: .equal, toItem: pinObject, attribute: .top, multiplier: 1.0, constant: self.margin),
+			NSLayoutConstraint(item: pinObject, attribute: .trailing, relatedBy: .equal, toItem: pinLetter, attribute: .trailing, multiplier: 1.0, constant: self.margin),
 			NSLayoutConstraint(item: pinLetter, attribute: .height, relatedBy: .equal, toItem: pinLetter, attribute: .width, multiplier: 1.0, constant: 0)
 			
 		])
@@ -131,8 +132,6 @@ class MapPinView: UIView {
 	
 		pinBody.tintColor = colour
 		pinLetter.image = UIImage(named: icon)
-		
-		image = renderImage()
 	
 	}
 	
@@ -187,5 +186,5 @@ class MapPinView: UIView {
 		return image
        
     }
-	
+    
 }

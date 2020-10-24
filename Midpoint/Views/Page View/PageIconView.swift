@@ -45,7 +45,7 @@ class PageIconView: UIView {
 		
 			case .empty:
 			iconImage.image = UIImage(named: "Add-Button")
-			self.backgroundColor = #colorLiteral(red: 0.80, green: 0.49, blue: 0.15, alpha: 1.00)
+			self.backgroundColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
 		
 			case .set, .editing:
 			iconImage.image = UIImage(named: meta.icon)

@@ -42,9 +42,12 @@ class PageTileView: UIView {
 	weak var mapDelegate: MapDelegate?
 		
 	init(state: PageTileState, meta: PageTileMetaModel) {
+		
 		self.locationIcon = PageIconView(state: state, meta: meta)
 		self.meta = meta
+		
 		super.init(frame: CGRect.zero)
+		
 		self.willInitState(state: state)
 		
 		tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapLocation(sender:)))
@@ -127,14 +130,14 @@ class PageTileView: UIView {
 		
 		guard let index = self.index else { return }
 		
-		if state == .empty || state == .set {
+		if state != .empty, let location = meta.placemark?.coordinate {
+			mapDelegate?.moveCamera(location: location, animated: false)
+		}
 		
-			// TODO:
-			// Update mapview camera location before hovering pin if annotation exists
-			
+		if state == .empty || state == .set {
 			pageDelegate?.freezePages(freeze: index)
+			mapDelegate?.updatePin(meta: meta)
 			mapDelegate?.hoverPin(meta: meta)
-			
 		}
 		
 	}
@@ -173,13 +176,6 @@ class PageTileView: UIView {
 			safe.locationIcon.iconImage.transform = CGAffineTransform(scaleX: icon, y: icon)
 		}, completion: nil)
 
-//		UIView.animate(withDuration: 0.1, delay: 0.0, options: .curveEaseOut, animations: { [weak self] in
-//			guard let safe = self else { return }
-//			safe.alpha = alpha
-//			safe.transform = CGAffineTransform(scaleX: outside, y: outside)
-//			safe.locationContainer.transform = CGAffineTransform(scaleX: inside, y: inside)
-//		}, completion: nil)
-		
 	}
 	
 	func willSetState(state: PageTileState) {

@@ -9,8 +9,13 @@
 import Foundation
 import UIKit
 import CoreLocation
+import MapKit
 
 protocol MapDelegate: class {
+
+	func updatePin(meta: PageTileMetaModel)
+	
+	func renderPin(meta: PageTileMetaModel) -> UIImage
 
 	func hoverPin(meta: PageTileMetaModel)
 	
@@ -19,7 +24,9 @@ protocol MapDelegate: class {
 	func removePin(meta: PageTileMetaModel)
 	
 	func replacePin(meta: PageTileMetaModel)
-	
+
+	func moveCamera(location: CLLocationCoordinate2D, animated: Bool)
+
 	func relativeCenter(middle: Bool) -> CLLocationCoordinate2D
 
 }
